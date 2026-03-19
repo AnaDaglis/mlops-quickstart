@@ -20,27 +20,27 @@ targets:
         data_ingestion_job:
           permissions:
             - level: "CAN_MANAGE"
-              group_name: "PowerUsers"
-            - level: "CAN_MANAGE_RUN"
-              group_name: "Developers"
+              group_name: "t1gjjm-development-workspace-users"
+            #- level: "CAN_MANAGE_RUN"
+            #  group_name: "Developers"
         model_training_job:
           permissions:
             - level: "CAN_MANAGE"
-              group_name: "PowerUsers"
-            - level: "CAN_MANAGE_RUN"
-              group_name: "Developers"
+              group_name: "t1gjjm-development-workspace-users"
+            #- level: "CAN_MANAGE_RUN"
+            #  group_name: "Developers"
         model_deployment_job:
           permissions:
             - level: "CAN_MANAGE"
-              group_name: "PowerUsers"
-            - level: "CAN_MANAGE_RUN"
-              group_name: "Developers"
+              group_name: "t1gjjm-development-workspace-users"
+            #- level: "CAN_MANAGE_RUN"
+            #  group_name: "Developers"
         batch_inference_job:
           permissions:
             - level: "CAN_MANAGE"
-              group_name: "PowerUsers"
-            - level: "CAN_MANAGE_RUN"
-              group_name: "Developers"
+              group_name: "t1gjjm-development-workspace-users"
+            #- level: "CAN_MANAGE_RUN"
+            #  group_name: "Developers"
 
   prod:
     mode: production
@@ -51,25 +51,25 @@ targets:
       schema_name: iris
       environment: prod
     
-    # Override permissions for prod environment (only PowerUsers group)
+    # Override permissions for prod environment (only t1gjjm-development-workspace-users group)
     resources:
       jobs:
         data_ingestion_job:
           permissions:
             - level: "CAN_MANAGE"
-              group_name: "PowerUsers"
+              group_name: "t1gjjm-development-workspace-users"
         model_training_job:
           permissions:
             - level: "CAN_MANAGE"
-              group_name: "PowerUsers"
+              group_name: "t1gjjm-development-workspace-users"
         model_deployment_job:
           permissions:
             - level: "CAN_MANAGE"
-              group_name: "PowerUsers"
+              group_name: "t1gjjm-development-workspace-users"
         batch_inference_job:
           permissions:
             - level: "CAN_MANAGE"
-              group_name: "PowerUsers"
+              group_name: "t1gjjm-development-workspace-users"
 
 variables:
   catalog_name:
