@@ -74,7 +74,7 @@ targets:
 variables:
   catalog_name:
     description: "Name of the Unity Catalog to use"
-    default: "mlops_quickstart_dev"
+    default: "blc_development"
   schema_name:
     description: "Name of the schema to use within the catalog"
     default: "iris"
