@@ -18,6 +18,8 @@ resources:
           default: "${var.schema_name}"
         - name: "model_name"
           default: "iris_model"
+        - name: "full_model_name"
+          default: "${var.catalog_name}.${var.schema_name}.iris_model"
         - name: "model_version"
           default: "1"
 
@@ -53,7 +55,7 @@ resources:
           notebook_task:
             notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/1_model_evaluation.ipynb"
             base_parameters:
-              model_name: "{{job.parameters.catalog_name}}.{{job.parameters.schema_name}}.{{job.parameters.model_name}}"
+              model_name: "{{job.parameters.full_model_name}}"
               model_version: "{{job.parameters.model_version}}"
 
         # ── Step 4: Model Approval ──────────────────────────────────────────
@@ -64,7 +66,7 @@ resources:
           notebook_task:
             notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/2_model_approval.ipynb"
             base_parameters:
-              model_name: "{{job.parameters.catalog_name}}.{{job.parameters.schema_name}}.{{job.parameters.model_name}}"
+              model_name: "{{job.parameters.full_model_name}}"
               model_version: "{{job.parameters.model_version}}"
 
         # ── Step 5: Model Deployment ────────────────────────────────────────
@@ -75,7 +77,7 @@ resources:
           notebook_task:
             notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/3_model_deployment.ipynb"
             base_parameters:
-              model_name: "{{job.parameters.catalog_name}}.{{job.parameters.schema_name}}.{{job.parameters.model_name}}"
+              model_name: "{{job.parameters.full_model_name}}"
               model_version: "{{job.parameters.model_version}}"
 
         # ── Step 6: Batch Inference ─────────────────────────────────────────
