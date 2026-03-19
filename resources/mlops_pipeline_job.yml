@@ -1,0 +1,100 @@
+resources:
+  jobs:
+    mlops_pipeline_job:
+      name: "Iris MLOps Pipeline - ${var.environment}"
+      description: "End-to-end MLOps pipeline: data ingestion, model training, evaluation, deployment, and batch inference"
+
+      # Email notifications on failure
+      email_notifications:
+        on_failure:
+          - "your.name@address.com"
+        no_alert_for_skipped_runs: false
+
+      # Consolidated job parameters from all 4 jobs
+      parameters:
+        - name: "catalog_name"
+          default: "${var.catalog_name}"
+        - name: "schema_name"
+          default: "${var.schema_name}"
+        - name: "model_name"
+          default: "iris_model"
+        - name: "model_version"
+          default: "1"
+
+      # Pipeline tasks with dependencies
+      tasks:
+
+        # ── Step 1: Data Ingestion ──────────────────────────────────────────
+        - task_key: "ingest_data"
+          description: "Ingest iris dataset into Unity Catalog"
+          notebook_task:
+            notebook_path: "../notebooks/1_data_preprocessing/data_ingestion.ipynb"
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+              schema_name: "{{job.parameters.schema_name}}"
+
+        # ── Step 2: Model Training ──────────────────────────────────────────
+        - task_key: "train_model"
+          description: "Train iris classification model"
+          depends_on:
+            - task_key: "ingest_data"
+          notebook_task:
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_training.ipynb"
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+              schema_name: "{{job.parameters.schema_name}}"
+              model_name: "{{job.parameters.model_name}}"
+
+        # ── Step 3: Model Evaluation ────────────────────────────────────────
+        - task_key: "evaluation"
+          description: "Evaluate model performance before deployment"
+          depends_on:
+            - task_key: "train_model"
+          notebook_task:
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/1_model_evaluation.ipynb"
+            base_parameters:
+              model_name: "{{job.parameters.catalog_name}}.{{job.parameters.schema_name}}.{{job.parameters.model_name}}"
+              model_version: "{{job.parameters.model_version}}"
+
+        # ── Step 4: Model Approval ──────────────────────────────────────────
+        - task_key: "approval"
+          description: "Approve model for deployment based on evaluation results"
+          depends_on:
+            - task_key: "evaluation"
+          notebook_task:
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/2_model_approval.ipynb"
+            base_parameters:
+              model_name: "{{job.parameters.catalog_name}}.{{job.parameters.schema_name}}.{{job.parameters.model_name}}"
+              model_version: "{{job.parameters.model_version}}"
+
+        # ── Step 5: Model Deployment ────────────────────────────────────────
+        - task_key: "deployment"
+          description: "Deploy approved model to production endpoint"
+          depends_on:
+            - task_key: "approval"
+          notebook_task:
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/3_model_deployment.ipynb"
+            base_parameters:
+              model_name: "{{job.parameters.catalog_name}}.{{job.parameters.schema_name}}.{{job.parameters.model_name}}"
+              model_version: "{{job.parameters.model_version}}"
+
+        # ── Step 6: Batch Inference ─────────────────────────────────────────
+        - task_key: "batch_inference"
+          description: "Run batch inference using the deployed iris classification model"
+          depends_on:
+            - task_key: "deployment"
+          notebook_task:
+            notebook_path: "../notebooks/3_inference/batch_inference.ipynb"
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+              schema_name: "{{job.parameters.schema_name}}"
+              model_name: "{{job.parameters.model_name}}"
+
+      # Timeout and retry settings (increased to cover all 6 tasks)
+      timeout_seconds: 7200
+      max_concurrent_runs: 1
+
+      # Tags for organization
+      tags:
+        Environment: "${var.environment}"
+        Project: "mlops-quickstart"
