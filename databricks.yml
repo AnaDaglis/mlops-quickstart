@@ -4,11 +4,14 @@ bundle:
 include:
   - resources/mlops_pipeline_job.yml
 
+run_as:
+  service_principal_name: '1b082099-9f67-4728-ae71-1129bb5223c6'
+
 targets:
   dev:
     mode: development
     workspace:
-      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Shared/.bundle/${bundle.name}/${bundle.target}
     default: true
     variables:
       catalog_name: blc_development
@@ -18,7 +21,7 @@ targets:
   prod:
     mode: production
     workspace:
-      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Shared/.bundle/${bundle.name}/${bundle.target}
     variables:
       catalog_name: mlops_quickstart_prod
       schema_name: iris
