@@ -100,3 +100,10 @@ resources:
       tags:
         Environment: "${var.environment}"
         Project: "mlops-quickstart"
+
+      # Permissions
+      permissions:
+        - level: "CAN_MANAGE"
+          user_name: "anadaglis@bluelightcard.co.uk"
+        - level: "CAN_VIEW"
+          group_name: "users"
